@@ -1,11 +1,10 @@
-import clsx from "clsx"
+import { useQueryClient } from "@tanstack/react-query"
 import React, { ReactElement } from "react"
 import toast from "react-hot-toast"
 import Button from "../../../components/Button"
 import { Bonfire } from "../../../data/types/BonfireAbi"
-import useBonfireContract from "../../../hooks/useBonfireContract"
+import useCompleteQuestMutation from "../../../hooks/useBonfireContract/useCompleteQuestMutation"
 import useEnergyLeftQuery from "../../../hooks/useBonfireContract/useEnergyLeftQuery"
-import useWallet from "../../../hooks/useWallet"
 
 type Props = {
     questId: number
@@ -18,11 +17,27 @@ export default function QuestCard({
     quest,
     completed,
 }: Props): ReactElement {
-    /* TODO: 5. implement quest card */
+    const { mutate: completeQuest } = useCompleteQuestMutation(questId)
+
+    const toastMessages = {
+        loading: "Completing quest",
+        success: <b>Quest Completed!</b>,
+        error: <b>Could not complete quest.</b>,
+    }
+
+    function handleStartQuest() {
+        completeQuest(undefined, {
+            onSuccess: async (tx) => {
+                await toast.promise(tx.wait(), toastMessages)
+            },
+            onError: () => toast.error("This didn't work."),
+        })
+    }
+
     return (
-        <span>
+        <Button style="primary" onClick={handleStartQuest}>
             quest: {quest.name} questId: {questId} completed:{" "}
             {completed ? "yes" : "no"}
-        </span>
+        </Button>
     )
 }
