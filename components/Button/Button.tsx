@@ -17,7 +17,17 @@ export default function Button({
     onClick,
 }: Props): ReactElement {
     return (
-        /* TODO: 1. Button */
-        null
+        <button
+            className={clsx(
+                className,
+                "rounded-full py-1 w-full text-sm border-1",
+                style === "primary"
+                    ? "bg-primary-blue border-primary-blue text-white"
+                    : "bg-white/50 border-secondary-gray text-secondary-gray"
+            )}
+            onClick={onClick}
+        >
+            {children}
+        </button>
     )
 }
