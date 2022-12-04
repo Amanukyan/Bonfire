@@ -1,8 +1,18 @@
 import useBonfireContract from "./useBonfireContract"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, UseQueryResult } from "@tanstack/react-query"
+import { BonfireAbi } from "../../data/types"
+import { Bonfire } from "../../data/types/BonfireAbi"
 
-export default function useQuestsQuery() {
+async function fetchQuests(bonfireContract: BonfireAbi) : Promise<Bonfire.QuestStructOutput[]> {
+    const quests = await bonfireContract.getAllQuests()
+    return quests
+}
+
+export default function useQuestsQuery() : UseQueryResult<Bonfire.QuestStructOutput[], unknown> {
     const bonfire = useBonfireContract()
-    /* TODO: 3. implement queries */
-    return null
+
+    return useQuery({
+         queryKey: ['quests'], 
+         queryFn: () => fetchQuests(bonfire!) 
+    })
 }

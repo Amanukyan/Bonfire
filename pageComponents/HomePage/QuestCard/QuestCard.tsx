@@ -19,5 +19,10 @@ export default function QuestCard({
     completed,
 }: Props): ReactElement {
     /* TODO: 5. implement quest card */
-    return null
+    return (
+        <span>
+            quest: {quest.name} questId: {questId} completed:{" "}
+            {completed ? "yes" : "no"}
+        </span>
+    )
 }
