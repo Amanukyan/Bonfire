@@ -1,13 +1,25 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement, useEffect } from "react"
+import { useRouter } from "next/router"
 import Button from "../../components/Button"
 import Page from "../../components/Page"
+import useWallet from "../../hooks/useWallet"
 
 import { InjectedConnector } from "@web3-react/injected-connector"
 import { useWeb3React } from "@web3-react/core"
+
 export const injected = new InjectedConnector({})
 
 export default function ConnectWalletPage(): ReactElement {
     const { activate } = useWeb3React()
+    const router = useRouter()
+    const { connected } = useWallet()
+
+    useEffect(() => {
+        if (connected) {
+            router.push("/")
+        }
+    }, [connected, router])
+
     return (
         <Page>
             <div className="flex flex-col gap-8">

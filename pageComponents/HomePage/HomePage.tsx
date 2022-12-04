@@ -1,17 +1,29 @@
-import React, { ReactElement } from "react"
+import { useRouter } from "next/router"
+import React, { ReactElement, useEffect, useMemo } from "react"
 import Page from "../../components/Page"
 import useCompletedQuestsQuery from "../../hooks/useBonfireContract/useCompletedQuestsQuery"
 import useQuestsQuery from "../../hooks/useBonfireContract/useQuestsQuery"
-import AllCompletedPage from "../AllCompletedPage"
 import BonfireRestButton from "./BonfireRestButton"
 import EnergyLeftDisplay from "./EnergyLeftDisplay"
 import QuestCard from "./QuestCard"
 
 export default function HomePage(): ReactElement {
+    const router = useRouter()
     const { data: quests } = useQuestsQuery()
     const questIds: number[] = Object.keys(quests || []).map((x) => Number(x))
     const { data: questsCompleted } = useCompletedQuestsQuery(questIds)
-    return !questsCompleted || questsCompleted.filter((b) => !b).length > 0 ? (
+    const hasCompletedAllQuest = useMemo(
+        () => questsCompleted && questsCompleted.filter((b) => !b).length == 0,
+        [questsCompleted]
+    )
+
+    useEffect(() => {
+        if (hasCompletedAllQuest) {
+            router.push("all-completed")
+        }
+    }, [hasCompletedAllQuest, router])
+
+    return (
         <Page>
             <div className="flex flex-col gap-8">
                 <span className="w-full max-w-prose text-gray-500 text-sm">
@@ -40,7 +52,5 @@ export default function HomePage(): ReactElement {
                 </div>
             </div>
         </Page>
-    ) : (
-        <AllCompletedPage />
     )
 }

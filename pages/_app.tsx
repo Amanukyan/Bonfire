@@ -8,6 +8,7 @@ import { Web3ReactProvider } from "@web3-react/core"
 import { ethers } from "ethers"
 import { Toaster } from "react-hot-toast"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
+import GuardPage from "../components/GuardPage"
 
 const getLibrary = (
     provider:
@@ -23,7 +24,9 @@ export default function App({ Component, pageProps }: AppProps) {
                 <Toaster />
                 <div className="flex flex-col">
                     <Header />
-                    <Component {...pageProps} />
+                    <GuardPage>
+                        <Component {...pageProps} />
+                    </GuardPage>
                 </div>
                 <ReactQueryDevtools initialIsOpen={false} />
             </QueryClientProvider>
