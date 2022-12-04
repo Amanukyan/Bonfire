@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query"
 import clsx from "clsx"
-import React, { ReactElement } from "react"
+import React, { ReactElement, useState } from "react"
 import toast from "react-hot-toast"
 import Button from "../../../components/Button"
 import { Bonfire } from "../../../data/types/BonfireAbi"
@@ -21,6 +21,7 @@ export default function QuestCard({
     const { data: energyLeft } = useEnergyLeftQuery()
     const { mutate: completeQuest } = useCompleteQuestMutation(questId)
     const queryClient = useQueryClient()
+    const [isCompleting, setIsCompleting] = useState(false)
     const enoughEnergy = energyLeft && energyLeft.gt(quest.energyCost)
 
     const toastMessages = {
@@ -32,7 +33,9 @@ export default function QuestCard({
     function handleStartQuest() {
         completeQuest(undefined, {
             onSuccess: async (tx) => {
+                setIsCompleting(true)
                 await toast.promise(tx.wait(), toastMessages)
+                setIsCompleting(false)
                 queryClient.invalidateQueries({ queryKey: ["completedQuests"] })
                 queryClient.invalidateQueries({ queryKey: ["energyLeft"] })
             },
@@ -46,7 +49,8 @@ export default function QuestCard({
                 "p-4 border border-black/25 rounded-xl shadow",
                 !completed && enoughEnergy && "bg-completable-card",
                 !completed && !enoughEnergy && "bg-non-completable-card",
-                completed && "bg-completed-card"
+                completed && "bg-completed-card",
+                isCompleting && questId == 1 && "animate-pulse-card"
             )}
         >
             <div className="flex justify-between">
