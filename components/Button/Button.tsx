@@ -22,7 +22,7 @@ export default function Button({
         <button
             className={clsx(
                 className,
-                "rounded-full py-1 w-full text-sm border-1",
+                "rounded-full py-1 w-full text-sm border",
                 disabled && "opacity-50",
                 style === "primary"
                     ? "bg-primary-blue border-primary-blue text-white"

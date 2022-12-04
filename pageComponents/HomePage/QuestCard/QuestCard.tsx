@@ -1,4 +1,4 @@
-import { useQueryClient } from "@tanstack/react-query"
+import clsx from "clsx"
 import React, { ReactElement } from "react"
 import toast from "react-hot-toast"
 import Button from "../../../components/Button"
@@ -17,7 +17,9 @@ export default function QuestCard({
     quest,
     completed,
 }: Props): ReactElement {
+    const { data: energyLeft } = useEnergyLeftQuery()
     const { mutate: completeQuest } = useCompleteQuestMutation(questId)
+    const enoughEnergy = energyLeft && energyLeft.gt(quest.energyCost)
 
     const toastMessages = {
         loading: "Completing quest",
@@ -35,9 +37,32 @@ export default function QuestCard({
     }
 
     return (
-        <Button style="primary" onClick={handleStartQuest}>
-            quest: {quest.name} questId: {questId} completed:{" "}
-            {completed ? "yes" : "no"}
-        </Button>
+        <div
+            className={clsx(
+                "p-4 border border-black/25 rounded-xl shadow",
+                !completed && enoughEnergy && "bg-completable-card",
+                !completed && !enoughEnergy && "bg-non-completable-card",
+                completed && "bg-completed-card"
+            )}
+        >
+            <div className="flex justify-between">
+                <span>{quest.name}</span>
+                <div>
+                    <strong className="mr-1">
+                        {quest.energyCost.toNumber()}
+                    </strong>
+                    <span>Energy</span>
+                </div>
+            </div>
+            {!completed && enoughEnergy && (
+                <Button
+                    className="mt-2"
+                    style="secondary"
+                    onClick={handleStartQuest}
+                >
+                    Start
+                </Button>
+            )}
+        </div>
     )
 }
