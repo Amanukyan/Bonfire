@@ -8,6 +8,7 @@ import useRestMutation from "../../../hooks/useBonfireContract/useRestMutation"
 export default function BonfireRestButton(): ReactElement {
     const { data: energyLeft } = useEnergyLeftQuery()
     const { mutate: restAtTheBonfire } = useRestMutation()
+    const queryClient = useQueryClient()
 
     const toastMessages = {
         loading: "Resting at the bonfire...",
@@ -19,6 +20,8 @@ export default function BonfireRestButton(): ReactElement {
         restAtTheBonfire(undefined, {
             onSuccess: async (tx) => {
                 await toast.promise(tx.wait(), toastMessages)
+                queryClient.invalidateQueries({ queryKey: ["completedQuests"] })
+                queryClient.invalidateQueries({ queryKey: ["energyLeft"] })
             },
             onError: () => toast.error("This didn't work."),
         })

@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query"
 import clsx from "clsx"
 import React, { ReactElement } from "react"
 import toast from "react-hot-toast"
@@ -19,6 +20,7 @@ export default function QuestCard({
 }: Props): ReactElement {
     const { data: energyLeft } = useEnergyLeftQuery()
     const { mutate: completeQuest } = useCompleteQuestMutation(questId)
+    const queryClient = useQueryClient()
     const enoughEnergy = energyLeft && energyLeft.gt(quest.energyCost)
 
     const toastMessages = {
@@ -31,6 +33,8 @@ export default function QuestCard({
         completeQuest(undefined, {
             onSuccess: async (tx) => {
                 await toast.promise(tx.wait(), toastMessages)
+                queryClient.invalidateQueries({ queryKey: ["completedQuests"] })
+                queryClient.invalidateQueries({ queryKey: ["energyLeft"] })
             },
             onError: () => toast.error("This didn't work."),
         })
