@@ -50,7 +50,7 @@ export default function QuestCard({
                 !completed && enoughEnergy && "bg-completable-card",
                 !completed && !enoughEnergy && "bg-non-completable-card",
                 completed && "bg-completed-card",
-                isCompleting && questId == 1 && "animate-pulse-card"
+                isCompleting && "animate-pulse-card"
             )}
         >
             <div className="flex justify-between">
@@ -67,6 +67,7 @@ export default function QuestCard({
                     className="mt-2"
                     style="secondary"
                     onClick={handleStartQuest}
+                    disabled={isCompleting}
                 >
                     Start
                 </Button>
